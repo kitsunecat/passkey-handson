@@ -30,10 +30,21 @@ Chrome の DevTools で、本物の認証器の代わりになる「仮想認証
 1. http://localhost:3000 を開いた状態で DevTools を開く
 2. 右上の ︙ → More tools → **WebAuthn** を開く
 3. 「Enable virtual authenticator environment」にチェック
-4. 「Add」で認証器を追加する。お題によって以下を切り替えます
+4. 次の設定で「Add」を押して認証器を追加する（**初期値のままでは動きません**）
+
+   | 項目 | 設定 |
+   | --- | --- |
+   | Protocol | ctap2 |
+   | Transport | **internal** |
+   | Supports resident keys | **オン** |
+   | Supports large blob | オフ |
+   | Supports user verification | **オン** |
+
    - **Supports resident keys**：Discoverable Credential（ユーザーネームレスでログインできるパスキー）を保存できるか
    - **Supports user verification**：生体認証や PIN によるユーザー検証ができるか
 5. 登録すると、WebAuthn パネルの「Credentials」に作られたパスキーが表示されます
+
+> Chrome では、「Supports user verification」がオフの認証器だと、ユーザーネームレスのログイン（「パスキーでログイン」ボタン）ができません。また Transport が usb の場合は、resident keys がオンでもユーザー検証なしではパスキーを作成できません。
 
 > 仮想認証器はタブを閉じたりDevToolsを閉じたりすると消えます。消えた認証器のパスキーではログインできなくなるので、そのときは新規登録し直してください。
 
@@ -80,7 +91,8 @@ git switch answer/02-conditional-ui
 | 症状 | 対処 |
 | --- | --- |
 | 「このパスキーは登録されていません」 | DB を消した、または別の環境で作ったパスキーです。新規登録し直すか、認証器側のパスキーを削除してください |
-| パスキーの作成ができない | 仮想認証器の「Supports resident keys」がオフになっていないか確認してください（ベースのアプリは Discoverable Credential 必須です） |
+| パスキーの作成ができない | 仮想認証器の設定（Transport が internal、resident keys と user verification がオン）を確認してください。ベースのアプリは Discoverable Credential 必須です |
+| 登録はできたがログインできない | 仮想認証器の「Supports user verification」がオフになっていないか確認してください |
 | ボタンを押しても何も起きない | `http://localhost:3000` で開いているか、DevTools の Console にエラーが出ていないか確認してください |
 | ポート 3000 が使用中 | ほかのアプリを止めてください（ポートは変更できません） |
 | Linux で `Permission denied` が出る | ユーザーIDが1000以外の場合は `UID=$(id -u) GID=$(id -g) docker compose up` で起動してください |
