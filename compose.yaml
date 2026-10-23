@@ -1,0 +1,16 @@
+services:
+  web:
+    build: .
+    # ホストと同じユーザーで動かし、生成されるファイル（DB・ログ・rails g の結果）を手元で編集できるようにする。
+    # Linux でユーザーIDが1000以外の場合は、UID=$(id -u) GID=$(id -g) docker compose up のように指定する
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      HOME: /tmp
+    # ポートは変えないこと（WebAuthn の allowed_origins を http://localhost:3000 にしているため）
+    ports:
+      - "3000:3000"
+    # ソースコードをマウントするので、手元で編集すると即反映される
+    volumes:
+      - .:/app
+    tty: true
+    stdin_open: true

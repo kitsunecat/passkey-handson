@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <title><%= content_for(:title) || "Passkey Hands-on" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+
+    <%= stylesheet_link_tag :app %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <main>
+      <h1><%= link_to "🔑 Passkey Hands-on", root_path %></h1>
+
+      <% if notice %>
+        <p class="notice"><%= notice %></p>
+      <% end %>
+      <p id="message" class="error" hidden></p>
+
+      <%= yield %>
+    </main>
+  </body>
+</html>
