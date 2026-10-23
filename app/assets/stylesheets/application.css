@@ -38,3 +38,11 @@ button, .button {
 
 .notice { padding: 0.5rem 0.75rem; background: #dafbe1; border-radius: 6px; }
 .error  { padding: 0.5rem 0.75rem; background: #ffebe9; border-radius: 6px; }
+
+/* お題1 */
+main { max-width: 48rem; }
+h3 { font-size: 0.95rem; margin-bottom: 0.25rem; }
+pre { padding: 0.75rem; overflow-x: auto; font-size: 0.8rem; background: #f6f8fa; border-radius: 6px; }
+.credential { display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 1rem; font-size: 0.85rem; }
+.credential dd { margin: 0; overflow-wrap: anywhere; }
+#inspector { margin-top: 2rem; }

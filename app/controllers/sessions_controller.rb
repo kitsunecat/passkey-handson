@@ -43,10 +43,20 @@ class SessionsController < ApplicationController
       return render_passkey_error("パスキーの持ち主が一致しません", "user handle mismatch")
     end
 
+    previous_sign_count = credential.sign_count
     credential.update!(sign_count: webauthn_credential.sign_count)
 
     log_in(credential.user)
-    render json: { redirect_to: root_path }
+    render_passkey_success(
+      challenge: challenge,
+      credential_id: webauthn_credential.id,
+      user_handle: webauthn_credential.user_handle,
+      user: credential.user.email,
+      user_present: webauthn_credential.response.authenticator_data.user_present?,
+      user_verified: webauthn_credential.response.authenticator_data.user_verified?,
+      sign_count: "#{previous_sign_count} → #{webauthn_credential.sign_count}",
+      signature_verified_with: credential.public_key
+    )
   rescue WebAuthn::Error => e
     render_passkey_error("パスキーでのログインに失敗しました", "#{e.class}: #{e.message}")
   end

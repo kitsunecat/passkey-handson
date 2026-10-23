@@ -1,14 +1,17 @@
 // パスキーでログイン（トップページ）
 import { base64urlToBuffer, bufferToBase64url, postJSON, showMessage } from "passkey/encoding"
+import { inspect, resetInspector, showResult } from "passkey/inspector"
 
 const button = document.getElementById("login-button")
 
 button?.addEventListener("click", async () => {
   showMessage("")
+  resetInspector()
 
   try {
     // ① サーバーから認証オプション（チャレンジ、RP IDなど）を受け取る
     const options = await postJSON("/session/options", {})
+    inspect("① サーバーが生成したオプション", options)
     options.challenge = base64urlToBuffer(options.challenge)
     options.allowCredentials = (options.allowCredentials || []).map((c) => ({ ...c, id: base64urlToBuffer(c.id) }))
 
@@ -18,7 +21,7 @@ button?.addEventListener("click", async () => {
     const credential = await navigator.credentials.get({ publicKey: options })
 
     // ③ 署名をサーバーに送り、保存済みの公開鍵で検証してもらう
-    const result = await postJSON("/session", {
+    const payload = {
       credential: {
         type: credential.type,
         id: credential.id,
@@ -32,9 +35,13 @@ button?.addEventListener("click", async () => {
           userHandle: credential.response.userHandle && bufferToBase64url(credential.response.userHandle)
         }
       }
-    })
+    }
+    inspect("② ブラウザがサーバーに送るデータ", payload)
+    // clientDataJSON の中身：チャレンジとオリジンが入っていて、これも署名・検証の対象になる
+    inspect("②' clientDataJSON をデコードした中身", JSON.parse(new TextDecoder().decode(credential.response.clientDataJSON)))
 
-    window.location.href = result.redirect_to
+    const result = await postJSON("/session", payload)
+    showResult("/session", payload, result)
   } catch (error) {
     console.error(error)
     showMessage(error.name === "NotAllowedError" ? "ログインがキャンセルされたか、使えるパスキーが見つかりませんでした" : error.message)

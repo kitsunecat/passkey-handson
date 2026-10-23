@@ -22,6 +22,16 @@
       <p id="message" class="error" hidden></p>
 
       <%= yield %>
+
+      <%# お題1：登録・ログインでやり取りされたデータを表示する %>
+      <section id="inspector" hidden>
+        <h2>🔍 やり取りされたデータ</h2>
+        <div id="inspector-log"></div>
+        <div id="inspector-actions" class="actions" hidden>
+          <button type="button" id="replay-button">リプレイ（同じデータをもう一度送る）</button>
+          <a id="next-link" class="button">トップへ進む</a>
+        </div>
+      </section>
     </main>
   </body>
 </html>

@@ -57,7 +57,16 @@ class RegistrationsController < ApplicationController
     user.save!
 
     log_in(user)
-    render json: { redirect_to: root_path }
+    render_passkey_success(
+      challenge: registration["challenge"],
+      credential_id: webauthn_credential.id,
+      aaguid: webauthn_credential.response.aaguid,
+      user_present: webauthn_credential.response.authenticator_data.user_present?,
+      user_verified: webauthn_credential.response.authenticator_data.user_verified?,
+      sign_count: webauthn_credential.sign_count.to_i,
+      public_key: webauthn_credential.public_key,
+      private_key: "（サーバーには届かない）"
+    )
   rescue WebAuthn::Error => e
     render_passkey_error("パスキーの登録に失敗しました", "#{e.class}: #{e.message}")
   rescue ActiveRecord::RecordInvalid => e
