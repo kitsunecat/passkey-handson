@@ -1,10 +1,30 @@
 <% if current_user %>
   <p>ログイン中：<strong><%= current_user.email %></strong></p>
   <%= button_to "ログアウト", session_path, method: :delete %>
+
+  <% if (last_login = session[:last_login]) %>
+    <h2>直近のログイン</h2>
+    <dl class="result">
+      <dt>user_verification の設定</dt><dd><code><%= last_login["user_verification"] %></code></dd>
+      <dt>UVフラグ（ユーザー検証）</dt><dd><code><%= last_login["user_verified"] %></code></dd>
+    </dl>
+  <% end %>
 <% else %>
   <p>パスキーで登録・ログインできる最小構成のアプリです。</p>
   <div class="actions">
     <%= link_to "新規登録", signup_path, class: "button" %>
     <button type="button" id="login-button">パスキーでログイン</button>
   </div>
+
+  <h2>ログイン時のユーザー検証（UV）</h2>
+  <%= form_with url: user_verification_setting_path, method: :patch, class: "inline" do |f| %>
+    <%= f.label :user_verification, "user_verification" %>
+    <%= f.select :user_verification, UserVerificationSettingsController::MODES.keys, selected: user_verification_setting %>
+    <%= f.submit "変更" %>
+  <% end %>
+  <ul class="hint">
+    <% UserVerificationSettingsController::MODES.each do |name, mode| %>
+      <li><code><%= name %></code>：<%= mode[:description] %></li>
+    <% end %>
+  </ul>
 <% end %>
