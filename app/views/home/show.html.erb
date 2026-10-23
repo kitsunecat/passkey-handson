@@ -3,6 +3,13 @@
   <%= button_to "ログアウト", session_path, method: :delete %>
 <% else %>
   <p>パスキーで登録・ログインできる最小構成のアプリです。</p>
+
+  <%# Conditional UI：autocomplete に webauthn を含めると、オートフィルの候補にパスキーが出る %>
+  <form id="login-form">
+    <label for="username">メールアドレス</label>
+    <input type="text" id="username" name="username" autocomplete="username webauthn" placeholder="ここを選ぶとパスキーが候補に出ます">
+  </form>
+
   <div class="actions">
     <%= link_to "新規登録", signup_path, class: "button" %>
     <button type="button" id="login-button">パスキーでログイン</button>
