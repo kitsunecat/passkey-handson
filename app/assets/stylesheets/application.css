@@ -38,3 +38,12 @@ button, .button {
 
 .notice { padding: 0.5rem 0.75rem; background: #dafbe1; border-radius: 6px; }
 .error  { padding: 0.5rem 0.75rem; background: #ffebe9; border-radius: 6px; }
+
+/* お題5 */
+h2 { margin-top: 2rem; }
+form.inline { flex-direction: row; align-items: center; }
+select { padding: 0.4rem; font-size: 1rem; }
+input[type="submit"] { padding: 0.4rem 0.9rem; font-size: 0.9rem; }
+.hint { font-size: 0.85rem; color: #59636e; padding-left: 1.2rem; }
+.result { display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 1rem; }
+.result dd { margin: 0; }
