@@ -25,7 +25,11 @@ export async function postJSON(url, body) {
     body: JSON.stringify(body)
   })
   const json = await response.json()
-  if (!response.ok) throw new Error(json.error || "エラーが発生しました")
+  if (!response.ok) {
+    const error = new Error(json.error || "エラーが発生しました")
+    error.reason = json.reason
+    throw error
+  }
   return json
 }
 
