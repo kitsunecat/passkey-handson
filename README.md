@@ -10,7 +10,7 @@ Kaigi on Rails 2026「Railsのためのパスキー実践入門 〜マルチテ�
 ## 起動
 
 ```sh
-git clone <このリポジトリ>
+git clone https://github.com/kitsunecat/passkey-handson.git
 cd passkey-handson
 docker compose up
 ```
