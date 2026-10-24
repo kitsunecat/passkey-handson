@@ -52,7 +52,8 @@ class RegistrationsController < ApplicationController
       external_id: webauthn_credential.id,          # クレデンシャルID：ログイン時にどのパスキーかを特定する
       public_key: webauthn_credential.public_key,   # 公開鍵：ログイン時に署名を検証する（秘密鍵は届かない）
       sign_count: webauthn_credential.sign_count,
-      aaguid: webauthn_credential.response.aaguid   # 認証器の「種類」を表すID
+      aaguid: webauthn_credential.response.aaguid,  # 認証器の「種類」を表すID
+      nickname: Credential.default_nickname(request.user_agent, [])
     )
     user.save!
 

@@ -38,3 +38,14 @@ button, .button {
 
 .notice { padding: 0.5rem 0.75rem; background: #dafbe1; border-radius: 6px; }
 .error  { padding: 0.5rem 0.75rem; background: #ffebe9; border-radius: 6px; }
+
+/* お題4 */
+main { max-width: 48rem; }
+.actions { align-items: center; }
+form.inline { flex-direction: row; align-items: center; }
+form.button_to { display: inline; }
+table.credentials { width: 100%; margin-bottom: 1rem; border-collapse: collapse; font-size: 0.9rem; }
+table.credentials th, table.credentials td { padding: 0.4rem; text-align: left; border-bottom: 1px solid #d0d7de; }
+input[type="submit"], button.danger { padding: 0.35rem 0.75rem; font-size: 0.85rem; }
+button.danger { background: #cf222e; }
+button:disabled { background: #8c959f; cursor: not-allowed; }

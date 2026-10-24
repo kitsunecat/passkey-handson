@@ -11,5 +11,10 @@ Rails.application.routes.draw do
   post   "session",         to: "sessions#create",  as: :session
   delete "session",         to: "sessions#destroy"
 
+  # お題4：パスキーの管理（追加登録・一覧・名前変更・削除）
+  resources :credentials, only: [ :index, :create, :update, :destroy ] do
+    post :options, on: :collection
+  end
+
   get "up" => "rails/health#show", as: :rails_health_check
 end

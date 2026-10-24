@@ -1,6 +1,9 @@
 <% if current_user %>
   <p>ログイン中：<strong><%= current_user.email %></strong></p>
-  <%= button_to "ログアウト", session_path, method: :delete %>
+  <div class="actions">
+    <%= link_to "パスキーの管理", credentials_path, class: "button" %>
+    <%= button_to "ログアウト", session_path, method: :delete %>
+  </div>
 <% else %>
   <p>パスキーで登録・ログインできる最小構成のアプリです。</p>
   <div class="actions">
