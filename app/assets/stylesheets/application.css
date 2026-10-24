@@ -38,3 +38,7 @@ button, .button {
 
 .notice { padding: 0.5rem 0.75rem; background: #dafbe1; border-radius: 6px; }
 .error  { padding: 0.5rem 0.75rem; background: #ffebe9; border-radius: 6px; }
+
+/* お題3 */
+h2 { margin-top: 2rem; }
+.hint { font-size: 0.85rem; color: #59636e; }

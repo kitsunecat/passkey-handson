@@ -20,12 +20,12 @@ class PasskeyFlowTest < ActionDispatch::IntegrationTest
     assert_select "strong", "alice@example.com"
   end
 
-  test "登録時のオプションには Discoverable Credential の指定が含まれる" do
+  test "登録時のオプションでは Discoverable Credential を「できれば」作るよう指定する" do
     post registration_options_path, params: { email: "alice@example.com" }, as: :json
 
     options = response.parsed_body
     assert_equal "localhost", options.dig("rp", "id")
-    assert_equal "required", options.dig("authenticatorSelection", "residentKey")
+    assert_equal "preferred", options.dig("authenticatorSelection", "residentKey")
     assert options["challenge"].present?
   end
 
