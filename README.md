@@ -1,7 +1,7 @@
 # 🔑 Passkey Hands-on
 
 パスキー（WebAuthn）で登録・ログインできる、最小構成の Rails アプリです。
-Kaigi on Rails 2026「Railsのためのパスキー実践入門 〜マルチテナントSaaSでの意思決定〜」の振り返り勉強会で使います。
+[Kaigi on Rails 2026「Railsのためのパスキー実践入門 〜マルチテナントSaaSでの意思決定〜」](https://kaigionrails.org/2026/talks/utakaha/)の振り返り勉強会で使います。
 
 - Ruby 4.0 / Rails 8.1 / [webauthn-ruby](https://github.com/cedarcode/webauthn-ruby) 3.5 / SQLite
 - フロントエンドは importmap ＋ 素の JavaScript（Node.js 不要）
