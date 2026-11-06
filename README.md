@@ -25,7 +25,8 @@ docker compose run --rm web bin/rails test
 
 ## 仮想認証器を使う（推奨）
 
-Chrome の DevTools で、本物の認証器の代わりになる「仮想認証器」を使えます。
+**認証器** とは、パスキーを保管して、指紋・顔・PIN などで本人確認をする仕組みのことです（スマホ、PC、パスワードマネージャー、USB キーなど）。
+Chrome の DevTools では、本物の認証器の代わりになる「仮想認証器」を使えます。
 
 1. http://localhost:3000 を開いた状態で DevTools を開く
 2. 右上の ︙ → More tools → **WebAuthn** を開く
@@ -40,11 +41,11 @@ Chrome の DevTools で、本物の認証器の代わりになる「仮想認証
    | Supports large blob | オフ |
    | Supports user verification | **オン** |
 
-   - **Supports resident keys**：Discoverable Credential（ユーザーネームレスでログインできるパスキー）を保存できるか
-   - **Supports user verification**：生体認証や PIN によるユーザー検証ができるか
+   - **Supports resident keys**：メールアドレスを入力しなくてもログインできるパスキー（Discoverable Credential）を保存できるか
+   - **Supports user verification**：指紋・顔・PIN などで本人確認ができるか
 5. 登録すると、WebAuthn パネルの「Credentials」に作られたパスキーが表示されます
 
-> Chrome では、「Supports user verification」がオフの認証器だと、ユーザーネームレスのログイン（「パスキーでログイン」ボタン）ができません。また Transport が usb の場合は、resident keys がオンでもユーザー検証なしではパスキーを作成できません。
+> Chrome では、「Supports user verification」がオフの認証器だと、メールアドレスを入力しないログイン（「パスキーでログイン」ボタン）ができません。また Transport が usb の場合は、resident keys がオンでも本人確認なしではパスキーを作成できません。
 
 > 仮想認証器はタブを閉じたりDevToolsを閉じたりすると消えます。消えた認証器のパスキーではログインできなくなるので、そのときは新規登録し直してください。
 
@@ -55,22 +56,35 @@ Chrome の DevTools で、本物の認証器の代わりになる「仮想認証
 | 登録 | `registration.js` | `RegistrationsController` |
 | ログイン | `login.js` | `SessionsController` |
 
-1. ブラウザがサーバーに **オプション**（チャレンジ、RP ID など）を要求する
-2. ブラウザが `navigator.credentials.create` / `get` で **認証器** にパスキーの作成・署名を依頼する
-3. ブラウザが結果をサーバーに送り、サーバーが **チャレンジ** と **署名** を検証する
+1. ブラウザがサーバーに、パスキーの作成やログインに必要な **設定値** を問い合わせる。中には、サーバーが毎回作る **使い捨てのランダムな値** や、パスキーを使えるドメイン（`localhost`）が入っている
+2. ブラウザが `navigator.credentials.create` / `get` で **認証器** にパスキーの作成・署名を依頼する。認証器はランダムな値に秘密鍵で署名する
+3. ブラウザが結果をサーバーに送り、サーバーが「ランダムな値が自分の作ったものか」と「署名が正しいか」を確かめる
 
 サーバーに保存されるのは公開鍵だけです（`credentials.public_key`）。秘密鍵は認証器から出てきません。
-WebAuthn の設定（RP ID など）は `config/initializers/webauthn.rb` にあります。
+ランダムな値は1回使ったら捨てるので、通信を盗み見て同じデータを送り直しても（リプレイ攻撃）ログインできません。
+WebAuthn の設定（パスキーを使えるドメインなど）は `config/initializers/webauthn.rb` にあります。
+
+### コードや DevTools に出てくる用語
+
+| 用語 | 意味 |
+| --- | --- |
+| `challenge`（チャレンジ） | サーバーが毎回作る、使い捨てのランダムな値 |
+| `rp`、RP ID | パスキーでログインさせる側のサービス（このアプリ）と、そのドメイン。RP は Relying Party の略 |
+| `origin`（オリジン） | ページを開いている URL の `http://localhost:3000` の部分 |
+| credential（クレデンシャル） | 認証器に作られたパスキーそのもの。サーバーには ID と公開鍵だけが届く |
+| ユーザーネームレス | メールアドレスを入力せず、認証器にあるパスキーを選ぶだけでログインする方式 |
+| ユーザーネームファースト | 先にメールアドレスを入力し、そのユーザーのパスキーでログインする方式 |
+| UV フラグ | 認証器が指紋・顔・PIN などで本人確認をしたかどうかの印（User Verified） |
 
 ## お題
 
 | | お題 | 講演との対応 |
 | --- | --- | --- |
-| 1 | [中身を覗く（全員）](docs/topics/01-inspect.md) | 登録・認証フロー、チャレンジ |
+| 1 | [中身を覗く（全員）](docs/topics/01-inspect.md) | 登録・ログインの流れ、使い捨てのランダムな値（チャレンジ） |
 | 2 | [Conditional UI（オートフィル）](docs/topics/02-conditional-ui.md) | 意思決定3：UX設計 |
 | 3 | [ユーザーネームファースト vs ユーザーネームレス](docs/topics/03-username-first.md) | 意思決定2：ユーザーの特定 |
 | 4 | [複数パスキーと管理画面](docs/topics/04-multiple-passkeys.md) | 意思決定5・6：登録数とパスキーの識別 |
-| 5 | [UVフラグと二要素認証](docs/topics/05-uv.md) | 意思決定4：パスキーと二要素認証 |
+| 5 | [本人確認の有無（UVフラグ）と二要素認証](docs/topics/05-uv.md) | 意思決定4：パスキーと二要素認証 |
 
 完成例は `answer/01-inspect` 〜 `answer/05-uv` ブランチにあります（いずれも `main` から分岐）。
 
@@ -80,8 +94,8 @@ git switch answer/02-conditional-ui
 
 ## 注意事項
 
-- 必ず **http://localhost:3000** で開いてください。`127.0.0.1` や LAN の IP アドレスでは動きません（`127.0.0.1` は RP ID にできず、LAN の IP は安全な接続とみなされないため）
-- ポート番号は変えないでください（`allowed_origins` と一致させているため）
+- 必ず **http://localhost:3000** で開いてください。`127.0.0.1` や LAN の IP アドレスでは動きません（パスキーは IP アドレスではなくドメイン名に紐づくため `127.0.0.1` では使えず、LAN の IP は安全な接続とみなされないため）
+- ポート番号は変えないでください（パスキーを使ってよい URL として `http://localhost:3000` を設定しているため）
 - Codespaces などリモートの開発環境では動きません。手元の Docker で起動してください
 - 仮想認証器の利用を推奨します。iCloud キーチェーンや Google パスワードマネージャーに保存すると、`localhost` 用のパスキーが同期されて残ります
 - スマホで QR コードを読み取るログインはインターネット経由の中継を使うため、今回は対象外です
@@ -91,7 +105,7 @@ git switch answer/02-conditional-ui
 | 症状 | 対処 |
 | --- | --- |
 | 「このパスキーは登録されていません」 | DB を消した、または別の環境で作ったパスキーです。新規登録し直すか、認証器側のパスキーを削除してください |
-| パスキーの作成ができない | 仮想認証器の設定（Transport が internal、resident keys と user verification がオン）を確認してください。ベースのアプリは Discoverable Credential 必須です |
+| パスキーの作成ができない | 仮想認証器の設定（Transport が internal、resident keys と user verification がオン）を確認してください。ベースのアプリは、メールアドレスを入力せずにログインできるパスキー（Discoverable Credential）しか作れない設定です |
 | 登録はできたがログインできない | 仮想認証器の「Supports user verification」がオフになっていないか確認してください |
 | ボタンを押しても何も起きない | `http://localhost:3000` で開いているか、DevTools の Console にエラーが出ていないか確認してください |
 | ポート 3000 が使用中 | ほかのアプリを止めてください（ポートは変更できません） |

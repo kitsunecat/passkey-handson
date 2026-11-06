@@ -8,7 +8,7 @@ form?.addEventListener("submit", async (event) => {
   showMessage("")
 
   try {
-    // ① サーバーから登録オプション（チャレンジ、RP ID、ユーザー情報など）を受け取る
+    // ① サーバーから登録用の設定値（使い捨てのランダムな値 challenge、ドメイン、ユーザー情報など）を受け取る
     const options = await postJSON("/registration/options", { email: form.email.value })
 
     // base64url 文字列で届いた値を、WebAuthn APIが求める ArrayBuffer に変換する
@@ -17,11 +17,11 @@ form?.addEventListener("submit", async (event) => {
     options.excludeCredentials = (options.excludeCredentials || []).map((c) => ({ ...c, id: base64urlToBuffer(c.id) }))
 
     // ② 認証器にパスキーの作成を依頼する。
-    //    ここで生体認証やPINによるユーザー確認が行われ、認証器の中で鍵ペアが作られる。
-    //    戻ってくるのは公開鍵クレデンシャル（公開鍵など）で、秘密鍵は含まれない
+    //    ここで指紋・顔・PINなどによる本人確認が行われ、認証器の中で鍵ペア（秘密鍵と公開鍵）が作られる。
+    //    戻ってくるのはパスキーのIDや公開鍵などで、秘密鍵は含まれない
     const credential = await navigator.credentials.create({ publicKey: options })
 
-    // ③ 公開鍵クレデンシャルをサーバーに送り、検証・保存してもらう
+    // ③ パスキーのIDや公開鍵をサーバーに送り、検証・保存してもらう
     const result = await postJSON("/registration", {
       credential: {
         type: credential.type,
