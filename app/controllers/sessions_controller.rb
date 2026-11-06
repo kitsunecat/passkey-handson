@@ -35,7 +35,7 @@ class SessionsController < ApplicationController
       return render_passkey_error("このパスキーは登録されていません", "unknown credential id: #{webauthn_credential.id}")
     end
 
-    # 保存済みの公開鍵で署名を検証し、challenge・ページのURL（origin）・ドメイン・使用回数（sign_count）も確かめる
+    # 保存済みの公開鍵で署名を検証し、challenge・origin（ページの URL の `http://localhost:3000` の部分）・ドメイン・使用回数（sign_count）も確かめる
     webauthn_credential.verify(challenge, public_key: credential.public_key, sign_count: credential.sign_count)
 
     # 認証器に保存されていたユーザーID（user handle）が、パスキーの持ち主と一致するかも確認する

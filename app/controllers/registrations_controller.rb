@@ -44,7 +44,7 @@ class RegistrationsController < ApplicationController
     # ブラウザから届いたパスキーの情報（IDや公開鍵など）を読み込む
     webauthn_credential = WebAuthn::Credential.from_create(params.require(:credential).to_unsafe_h)
 
-    # challenge・ページのURL（origin）・ドメインなどが正しいか確かめる。不正なら WebAuthn::Error が発生する
+    # challenge・origin（ページの URL の `http://localhost:3000` の部分）・ドメインなどが正しいか確かめる。不正なら WebAuthn::Error が発生する
     webauthn_credential.verify(registration["challenge"])
 
     user = User.new(email: registration["email"], webauthn_id: registration["webauthn_id"])
