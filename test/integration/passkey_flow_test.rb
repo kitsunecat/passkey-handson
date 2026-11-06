@@ -29,10 +29,10 @@ class PasskeyFlowTest < ActionDispatch::IntegrationTest
     assert options["challenge"].present?
   end
 
-  test "チャレンジが一致しないと登録に失敗する" do
+  test "サーバーが作ったランダムな値（challenge）と違うと登録に失敗する" do
     post registration_options_path, params: { email: "alice@example.com" }, as: :json
 
-    # サーバーが発行したものとは別のチャレンジでパスキーを作る
+    # サーバーが作ったものとは別の challenge でパスキーを作る
     credential = fake_client.create(challenge: WebAuthn.standard_encoder.encode(SecureRandom.random_bytes(32)))
     post registration_path, params: { credential: credential }, as: :json
 

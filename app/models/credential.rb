@@ -1,4 +1,4 @@
-# パスキー1件分の「公開鍵クレデンシャル」。
+# 登録されたパスキー1件分の情報（ID・公開鍵・使用回数など）。
 # サーバーに保存するのは公開鍵だけで、秘密鍵は認証器の中から出てこない。
 class Credential < ApplicationRecord
   belongs_to :user
