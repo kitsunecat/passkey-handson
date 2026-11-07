@@ -11,5 +11,8 @@ Rails.application.routes.draw do
   post   "session",         to: "sessions#create",  as: :session
   delete "session",         to: "sessions#destroy"
 
+  # お題5：ログイン時の user_verification の設定
+  patch "settings/user_verification", to: "user_verification_settings#update", as: :user_verification_setting
+
   get "up" => "rails/health#show", as: :rails_health_check
 end
