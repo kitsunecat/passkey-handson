@@ -75,17 +75,17 @@ WebAuthn の設定（パスキーを使えるドメインなど）は `config/in
 | credential（クレデンシャル） | 認証器に作られたパスキーそのもの。サーバーには ID と公開鍵だけが届く |
 | ユーザーネームレス | メールアドレスを入力せず、認証器にあるパスキーを選ぶだけでログインする方式 |
 | ユーザーネームファースト | 先にメールアドレスを入力し、そのユーザーのパスキーでログインする方式 |
-| UV フラグ | 認証器が指紋・顔・PIN などで本人確認をしたかどうかの印（User Verified） |
+| 本人確認フラグ（UV） | 認証器が指紋・顔・PIN などで本人確認をしたかどうかの印。UV は User Verified の略 |
 
 ## お題
 
-| | お題 | 講演との対応 |
+| | お題 | セッションとの対応 |
 | --- | --- | --- |
-| 1 | [中身を覗く（全員）](docs/topics/01-inspect.md) | 登録・ログインの流れ、使い捨てのランダムな値（チャレンジ） |
-| 2 | [Conditional UI（オートフィル）](docs/topics/02-conditional-ui.md) | 意思決定3：UX設計 |
-| 3 | [ユーザーネームファースト vs ユーザーネームレス](docs/topics/03-username-first.md) | 意思決定2：ユーザーの特定 |
-| 4 | [複数パスキーと管理画面](docs/topics/04-multiple-passkeys.md) | 意思決定5・6：登録数とパスキーの識別 |
-| 5 | [本人確認の有無（UVフラグ）と二要素認証](docs/topics/05-uv.md) | 意思決定4：パスキーと二要素認証 |
+| 1 | [中身を覗く（全員）](docs/topics/01-inspect.md) | パスキーとは、登録・ログインの流れ |
+| 2 | [Conditional UI（オートフィル）](docs/topics/02-conditional-ui.md) | パスキーの UX 設計 |
+| 3 | [ユーザーネームファースト vs ユーザーネームレス](docs/topics/03-username-first.md) | ログイン時にユーザーをどう特定するか |
+| 4 | [複数パスキーと管理画面](docs/topics/04-multiple-passkeys.md) | パスキーをいくつ登録できるようにするか、登録したパスキーをどう識別するか |
+| 5 | [本人確認フラグ（UV）と二要素認証](docs/topics/05-uv.md) | パスキーと二要素認証 |
 
 完成例は `answer/01-inspect` 〜 `answer/05-uv` ブランチにあります（いずれも `main` から分岐）。
 
