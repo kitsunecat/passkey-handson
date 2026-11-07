@@ -1,6 +1,17 @@
 <% if current_user %>
   <p>ログイン中：<strong><%= current_user.email %></strong></p>
   <%= button_to "ログアウト", session_path, method: :delete %>
+
+  <h2>サーバーに保存されているパスキー</h2>
+  <% current_user.credentials.each do |credential| %>
+    <dl class="credential">
+      <dt>クレデンシャルID</dt><dd><code><%= credential.external_id %></code></dd>
+      <dt>公開鍵</dt><dd><code><%= credential.public_key %></code></dd>
+      <dt>AAGUID</dt><dd><code><%= credential.aaguid %></code></dd>
+      <dt>sign_count</dt><dd><%= credential.sign_count %></dd>
+      <dt>秘密鍵</dt><dd>保存されていない（認証器の中にだけある）</dd>
+    </dl>
+  <% end %>
 <% else %>
   <p>パスキーで登録・ログインできる最小構成のアプリです。</p>
   <div class="actions">
