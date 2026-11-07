@@ -19,7 +19,7 @@ class SessionsController < ApplicationController
       user_verification: mode[:browser]
     )
 
-    # ③で確かめるので、challenge と UV の設定をセッションに保存しておく
+    # ③で確かめるので、challenge と本人確認（user_verification）の設定をセッションに保存しておく
     # （設定値を渡したあとで設定を変えられても、渡したときの設定で検証する）
     session[:authentication_challenge] = options.challenge
     session[:authentication_user_verification] = user_verification_setting
@@ -45,8 +45,8 @@ class SessionsController < ApplicationController
     end
 
     # 保存済みの公開鍵で署名を検証し、challenge・origin（ページの URL の `http://localhost:3000` の部分）・ドメイン・使用回数（sign_count）も確かめる。
-    # user_verification: true のときは、UVフラグが立っていることも検証する。
-    # UVフラグは認証器の自己申告で、ブラウザに required を伝えるだけでは保証にならない。サーバー側でも必ず確認する
+    # user_verification: true のときは、本人確認フラグ（UV）が立っていることも検証する。
+    # 本人確認フラグは認証器の自己申告で、ブラウザに required を伝えるだけでは保証にならない。サーバー側でも必ず確認する
     webauthn_credential.verify(
       challenge,
       public_key: credential.public_key,
@@ -62,7 +62,7 @@ class SessionsController < ApplicationController
     credential.update!(sign_count: webauthn_credential.sign_count)
 
     log_in(credential.user)
-    # UVフラグ：認証器が「本人確認に成功した」と自己申告したかどうか
+    # 本人確認フラグ（UV）：認証器が「本人確認に成功した」と自己申告したかどうか
     session[:last_login] = {
       "user_verified" => webauthn_credential.response.authenticator_data.user_verified?,
       "user_verification" => user_verification

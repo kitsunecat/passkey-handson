@@ -6,7 +6,7 @@
     <h2>直近のログイン</h2>
     <dl class="result">
       <dt>user_verification の設定</dt><dd><code><%= last_login["user_verification"] %></code></dd>
-      <dt>UVフラグ（本人確認）</dt><dd><code><%= last_login["user_verified"] %></code></dd>
+      <dt>本人確認フラグ（UV）</dt><dd><code><%= last_login["user_verified"] %></code></dd>
     </dl>
   <% end %>
 <% else %>
