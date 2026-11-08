@@ -1,0 +1,10 @@
+<% if current_user %>
+  <p>ログイン中：<strong><%= current_user.email %></strong></p>
+  <%= button_to "ログアウト", session_path, method: :delete %>
+<% else %>
+  <p>パスキーで登録・ログインできる最小構成のアプリです。</p>
+  <div class="actions">
+    <%= link_to "新規登録", signup_path, class: "button" %>
+    <button type="button" id="login-button">パスキーでログイン</button>
+  </div>
+<% end %>
