@@ -20,7 +20,9 @@ class RegistrationsController < ApplicationController
       # user.id はユーザーを表すID（user handle）。認証器にパスキーと一緒に保存され、ログイン時に返ってくる
       user: { id: user.webauthn_id, name: user.email, display_name: user.email },
       authenticator_selection: {
-        resident_key: "required",         # ユーザー情報ごと認証器に保存する（Discoverable Credential。メールアドレスなしでログインするため）
+        # お題3：ユーザー情報ごと保存するパスキー（Discoverable Credential）を作れない認証器でも登録できるよう preferred にする。
+        # その認証器で作ったパスキーは、ユーザーネームファーストでしかログインできない
+        resident_key: "preferred",
         user_verification: "preferred"    # 指紋・顔・PINなどによる本人確認を「できればする」
       }
     )
