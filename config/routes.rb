@@ -11,5 +11,10 @@ Rails.application.routes.draw do
   post   "session",         to: "sessions#create",  as: :session
   delete "session",         to: "sessions#destroy"
 
+  # お題5：ログイン時の user_verification の設定
+  patch "settings/user_verification", to: "user_verification_settings#update", as: :user_verification_setting
+  # お題5：本人確認フラグが false のときの二要素目（ワンタイムコード）
+  resource :second_factor, only: %i[new create]
+
   get "up" => "rails/health#show", as: :rails_health_check
 end
