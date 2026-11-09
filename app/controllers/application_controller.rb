@@ -2,12 +2,25 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
-  helper_method :current_user
+  helper_method :current_user, :user_verification_setting, :simulate_no_user_verification?
 
   private
 
   def current_user
     @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
+  end
+
+  # お題5：ログイン時に求める本人確認（UV）の設定。
+  # 本来はサービスやテナントの設定だが、ハンズオンでは画面から切り替えやすいよう cookie に保存する
+  def user_verification_setting
+    UserVerificationSettingsController::MODES.key?(cookies[:user_verification]) ? cookies[:user_verification] : "preferred"
+  end
+
+  # お題5（ハンズオン用）：本人確認しない認証器を再現するか。
+  # Chrome の仮想認証器は discouraged でも本人確認をして本人確認フラグを true で返すため、
+  # オンのときは、届いた本人確認フラグをサーバー側で false とみなす
+  def simulate_no_user_verification?
+    cookies[:simulate_no_user_verification] == "1"
   end
 
   def log_in(user)
