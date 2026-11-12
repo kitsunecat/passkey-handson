@@ -1,0 +1,11 @@
+<h2>ワンタイムコードの入力</h2>
+
+<p>パスキーでの認証で本人確認（指紋・顔・PINなど）が行われませんでした（本人確認フラグ = <code>false</code>）。二要素目として、ワンタイムコードを入力してください。</p>
+
+<%= form_with url: second_factor_path, method: :post do |f| %>
+  <%= f.label :code, "ワンタイムコード" %>
+  <%= f.text_field :code, inputmode: "numeric", autocomplete: "one-time-code", maxlength: 6, required: true, autofocus: true %>
+  <%= f.submit "確認" %>
+<% end %>
+
+<p class="hint">ハンズオン用に固定のコードにしています。<code>123456</code> は通り、それ以外（例：<code>000000</code>）は通りません。</p>

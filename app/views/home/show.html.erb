@@ -1,10 +1,49 @@
 <% if current_user %>
   <p>ログイン中：<strong><%= current_user.email %></strong></p>
   <%= button_to "ログアウト", session_path, method: :delete %>
+
+  <% if (last_login = session[:last_login]) %>
+    <h2>直近のログイン</h2>
+    <dl class="result">
+      <dt>本人確認を求めるか</dt><dd><%= UserVerificationSettingsController::MODES.dig(last_login["user_verification"], :label) %>（<code><%= last_login["user_verification"] %></code>）</dd>
+      <dt>本人確認フラグ（UV）</dt>
+      <dd>
+        <code><%= last_login["user_verified"] %></code>
+        <% if last_login["simulated"] %>（本人確認しない認証器を再現。認証器から届いた値は <code><%= last_login["actual_user_verified"] %></code>）<% end %>
+      </dd>
+      <dt>ワンタイムコード</dt><dd><%= last_login["second_factor"] ? "入力した（パスキーは所持の一要素だけだったため）" : "不要（パスキーで所持＋本人確認の二要素を満たしたため）" %></dd>
+    </dl>
+  <% end %>
 <% else %>
   <p>パスキーで登録・ログインできる最小構成のアプリです。</p>
   <div class="actions">
     <%= link_to "新規登録", signup_path, class: "button" %>
     <button type="button" id="login-button">パスキーでログイン</button>
   </div>
+
+  <h2>ログイン時の本人確認（UV）</h2>
+  <%= form_with url: user_verification_setting_path, method: :patch, class: "settings" do |f| %>
+    <fieldset class="field">
+      <legend>本人確認を求めるか</legend>
+      <% UserVerificationSettingsController::MODES.each do |name, mode| %>
+        <%= f.label :user_verification, value: name, class: "radio" do %>
+          <%= f.radio_button :user_verification, name, checked: name == user_verification_setting %>
+          <span>
+            <%= mode[:label] %>（<code><%= name %></code>）
+            <span class="hint"><%= mode[:description] %></span>
+          </span>
+        <% end %>
+      <% end %>
+    </fieldset>
+
+    <div class="field">
+      <%= f.label :simulate_no_user_verification, class: "switch" do %>
+        <%= f.check_box :simulate_no_user_verification, { checked: simulate_no_user_verification?, role: "switch" }, "1", "0" %>
+        本人確認しない認証器を再現する
+      <% end %>
+      <p class="hint">認証器から届いた本人確認フラグを、サーバー側で <code>false</code> とみなします。Chrome の仮想認証器は <code>discouraged</code> でも本人確認をして <code>true</code> を返すため、ハンズオン用に用意しています。</p>
+    </div>
+
+    <%= f.submit "設定を保存" %>
+  <% end %>
 <% end %>
